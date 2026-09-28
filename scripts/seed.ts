@@ -3,22 +3,24 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 
-// Load .env.local if present
-function loadEnvLocal() {
-  const envPath = path.join(process.cwd(), ".env.local");
-  if (!fs.existsSync(envPath)) return;
-  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eqIdx = trimmed.indexOf("=");
-    if (eqIdx < 0) continue;
-    const key = trimmed.slice(0, eqIdx).trim();
-    const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
-    if (key && !(key in process.env)) process.env[key] = val;
+// Load env files — .env.local overrides .env (Next.js convention)
+function loadEnvFiles() {
+  for (const name of [".env"]) {
+    const envPath = path.join(process.cwd(), name);
+    if (!fs.existsSync(envPath)) continue;
+    for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eqIdx = trimmed.indexOf("=");
+      if (eqIdx < 0) continue;
+      const key = trimmed.slice(0, eqIdx).trim();
+      const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
+      if (key) process.env[key] = val; // later file wins
+    }
   }
 }
 
-loadEnvLocal();
+loadEnvFiles();
 
 const uri = process.env.MONGODB_URI ?? "mongodb://localhost:27017";
 const dbName = process.env.MONGODB_DB ?? "maaz-notes";

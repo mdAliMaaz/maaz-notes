@@ -7,16 +7,8 @@ function clean(value: unknown) {
   return String(value ?? "").replace(/[\r\n|]/g, " ").trim();
 }
 
-function auth(request: Request) {
-  const configured = process.env.STUDIO_PASSWORD;
-  if (configured && request.headers.get("x-studio-password") !== configured) return false;
-  if (!configured && process.env.NODE_ENV === "production") return false;
-  return true;
-}
-
 export async function POST(request: Request) {
   try {
-    if (!auth(request)) return NextResponse.json({ error: "Studio password required." }, { status: 401 });
     const body = await request.json();
     const word = clean(body.word);
     const definition = clean(body.definition);
@@ -37,7 +29,6 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    if (!auth(request)) return NextResponse.json({ error: "Studio password required." }, { status: 401 });
     const body = await request.json();
     const originalWord = clean(body.originalWord);
     const word = clean(body.word);
@@ -61,7 +52,6 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    if (!auth(request)) return NextResponse.json({ error: "Studio password required." }, { status: 401 });
     const word = clean(new URL(request.url).searchParams.get("word"));
     if (!word) return NextResponse.json({ error: "Word is required." }, { status: 400 });
     const db = await getDb();

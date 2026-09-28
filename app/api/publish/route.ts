@@ -8,16 +8,8 @@ function cleanSlug(input: string) {
   return input.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
 }
 
-function auth(request: Request) {
-  const configured = process.env.STUDIO_PASSWORD;
-  if (configured && request.headers.get("x-studio-password") !== configured) return false;
-  if (!configured && process.env.NODE_ENV === "production") return false;
-  return true;
-}
-
 export async function POST(request: Request) {
   try {
-    if (!auth(request)) return NextResponse.json({ error: "Studio password required." }, { status: 401 });
     const body = await request.json();
     const rawMarkdown = String(body.markdown || "");
     const slug = cleanSlug(String(body.slug || ""));
@@ -52,7 +44,6 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    if (!auth(request)) return NextResponse.json({ error: "Studio password required." }, { status: 401 });
     const slug = cleanSlug(new URL(request.url).searchParams.get("slug") || "");
     if (!slug) return NextResponse.json({ error: "Slug is required." }, { status: 400 });
 
