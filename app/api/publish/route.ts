@@ -97,7 +97,7 @@ export async function DELETE(request: Request) {
     if (!existing?.ok) return NextResponse.json({ error: "Post not found on GitHub." }, { status: existing?.status || 404 });
     const file = await existing.json();
     const result = await githubRequest(slug, "DELETE", { message: `delete: ${slug}`, sha: file.sha, branch: process.env.GITHUB_BRANCH || "main" });
-    if (!result?.ok) return NextResponse.json({ error: "GitHub rejected the delete request.", detail: await result.text() }, { status: result.status });
+    if (!result?.ok) return NextResponse.json({ error: "GitHub rejected the delete request.", detail: result ? await result.text() : "No response" }, { status: result?.status ?? 500 });
     return NextResponse.json({ ok: true, mode: "github" });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unexpected error" }, { status: 500 });
