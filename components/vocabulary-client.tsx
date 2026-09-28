@@ -61,10 +61,13 @@ export default function VocabularyClient({ words }: { words: Word[] }) {
       </form>
     </section>
     <section className="section" style={{ paddingBottom: 20 }}>
-      <div className="section-head"><div><div className="eyebrow">Library</div><h2 className="section-title">Your words</h2></div></div>
+      <div className="section-head"><div><div className="eyebrow">Library</div><h2 className="section-title">Your words</h2></div><span className="muted" style={{ fontSize: 12, fontFamily: "var(--font-mono)" }}>{items.length} words</span></div>
       <div className="search-bar"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search your vocabulary…" aria-label="Search vocabulary" /></div>
-      <div className="post-grid">{filtered.map(word => <article className="card" key={word.word}><h3 style={{ marginTop: 0 }}>{word.word}</h3><p>{word.definition}</p><div className="example">{word.example}</div>{word.notes && <div className="meta" style={{ marginTop: 12 }}>{word.notes}</div>}<div className="card-actions"><button className="btn small" onClick={() => beginEdit(word)}>Edit</button><button className="btn small danger" onClick={() => remove(word)}>Delete</button></div></article>)}</div>
-      {filtered.length === 0 && <div className="empty">No vocabulary words match your search.</div>}
+      {query.trim() && (
+        filtered.length > 0
+          ? <div className="post-grid">{filtered.map(word => <article className="card" key={word.word}><h3 style={{ marginTop: 0 }}>{word.word}</h3><p>{word.definition}</p><div className="example">{word.example}</div>{word.notes && <div className="meta" style={{ marginTop: 12 }}>{word.notes}</div>}<div className="card-actions"><button className="btn small" onClick={() => beginEdit(word)}>Edit</button><button className="btn small danger" onClick={() => remove(word)}>Delete</button></div></article>)}</div>
+          : <div className="empty">No words match &ldquo;{query}&rdquo;.</div>
+      )}
     </section>
   </>;
 }
