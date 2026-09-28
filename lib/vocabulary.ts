@@ -14,6 +14,7 @@ export function getVocabulary(): Word[] {
   if (!fs.existsSync(vocabularyPath)) return [];
   return fs
     .readFileSync(vocabularyPath, "utf8")
+    .replace(/<!--[\s\S]*?-->/g, "")
     .split("\n")
     .map((line) => line.trim())
     .filter((line) => line.startsWith("- "))
