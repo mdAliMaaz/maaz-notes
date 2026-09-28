@@ -3,11 +3,19 @@ import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/posts";
 import Markdown from "@/components/markdown";
 
-export function generateStaticParams() { return getPosts().map(post => ({ slug: post.slug })); }
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    return (await getPosts()).map(post => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
+}
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) notFound();
   return <main className="blog-layout"><article className="article">
     <header className="article-header"><div className="meta"><span>{post.date}</span>{post.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}</div>

@@ -562,7 +562,7 @@ html[data-theme="light"] .notice {
 .flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 260px;
+  min-height: 320px;
   text-align: left;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
@@ -693,6 +693,68 @@ html[data-theme="light"] .notice {
   text-transform: uppercase;
 }
 
+/* ─── Mobile nav burger ─── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-burger span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--text-dim);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-burger--open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-burger--open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-burger--open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.nav-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+}
+.nav-mobile-menu {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 49;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+html[data-theme="light"] .nav-mobile-menu {
+  background: var(--surface);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+.nav-mobile-link {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-dim);
+  padding: 11px 12px;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+  display: block;
+}
+.nav-mobile-link:hover { color: var(--text); background: var(--surface-2); }
+
 /* ─── Vocabulary table ─── */
 .vocab-table {
   border: 1px solid var(--border);
@@ -788,11 +850,21 @@ html[data-theme="light"] .notice {
 }
 
 @media (max-width: 700px) {
-  .vocab-table-head { grid-template-columns: 120px 1fr 90px; }
-  .vocab-table-head .vocab-col-notes { display: none; }
-  .vocab-row { grid-template-columns: 120px 1fr 90px; }
+  /* vocab table: drop notes column, actions wrap below word+def */
+  .vocab-table-head { grid-template-columns: 120px 1fr; }
+  .vocab-table-head .vocab-col-notes,
+  .vocab-table-head span:last-child { display: none; }
+  .vocab-row {
+    grid-template-columns: 120px 1fr;
+    row-gap: 6px;
+    align-items: start;
+  }
   .vocab-col-notes { display: none; }
-  .vocab-example { padding-left: 136px; }
+  .vocab-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .vocab-example { padding-left: 16px; }
 }
 
 /* ─── Responsive ─── */
@@ -810,11 +882,21 @@ html[data-theme="light"] .notice {
   h1 { font-size: clamp(36px, 10vw, 56px); }
 }
 
+/* hide desktop nav, show hamburger */
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+  .nav-kbd-desktop { display: none; }
+}
+
 @media (max-width: 520px) {
   .topic-grid { grid-template-columns: 1fr; }
   .search-bar { flex-direction: column; }
   .hero-terminal { display: none; }
   .footer-tags { display: none; }
+  /* flashcard: tighter padding on small phones */
+  .flip-card-face { padding: 22px 20px; }
+  .flashcard .word { font-size: 26px; }
 }
 
 /* ─── Highlight.js overrides (always dark code blocks) ─── */

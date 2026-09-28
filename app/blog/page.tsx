@@ -1,8 +1,10 @@
 import { getPosts } from "@/lib/posts";
 import BlogList from "@/components/blog-list";
 
-export default function BlogPage() {
-  const posts = getPosts();
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = await getPosts();
   return (
     <main className="blog-layout">
       <div className="container">

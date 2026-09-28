@@ -15,8 +15,10 @@ function StatusBadge({ status }: { status: Project["status"] }) {
   );
 }
 
-export default function ProjectsPage() {
-  const projects = getProjects();
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  const projects = await getProjects();
   return (
     <main className="blog-layout">
       <div className="container">

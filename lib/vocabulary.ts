@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
+import { getDb } from "./db";
 
 export type Word = {
   word: string;
@@ -8,19 +7,13 @@ export type Word = {
   notes: string;
 };
 
-const vocabularyPath = path.join(process.cwd(), "content", "vocabulary.md");
-
-export function getVocabulary(): Word[] {
-  if (!fs.existsSync(vocabularyPath)) return [];
-  return fs
-    .readFileSync(vocabularyPath, "utf8")
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith("- "))
-    .map((line) => line.slice(2).split("|").map((part) => part.trim()))
-    .filter((parts) => parts.length >= 3 && parts[0])
-    .map(([word, definition, example, notes = ""]) => ({ word, definition, example, notes }));
+export async function getVocabulary(): Promise<Word[]> {
+  const db = await getDb();
+  return db
+    .collection<Word>("vocabulary")
+    .find({}, { projection: { _id: 0 } })
+    .sort({ word: 1 })
+    .toArray();
 }
 
 export function getDailyWords(words: Word[], date = new Date()): Word[] {

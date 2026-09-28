@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import ThemeToggle from "@/components/theme-toggle";
 import CommandPalette from "@/components/command-palette";
+import NavBurger from "@/components/nav-burger";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -41,8 +42,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <Link href="/studio"     className="nav-link">Studio</Link>
               </nav>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <kbd className="nav-kbd" title="Open command palette">⌘K</kbd>
+                <kbd className="nav-kbd nav-kbd-desktop" title="Open command palette">⌘K</kbd>
                 <ThemeToggle />
+                <NavBurger />
               </div>
             </div>
           </header>

@@ -10,8 +10,8 @@ const topics = [
   { label: "Books & Philosophy", icon: "◈" },
 ];
 
-export default function Home() {
-  const posts = getPosts().slice(0, 4);
+export default async function Home() {
+  const posts = (await getPosts()).slice(0, 4);
   return (
     <main style={{ flex: 1 }}>
       <div className="container">
@@ -90,7 +90,7 @@ export default function Home() {
               <div className="eyebrow">Daily practice</div>
               <h2 className="section-title" style={{ marginTop: 8 }}>10 vocabulary flashcards every day.</h2>
               <p className="muted" style={{ marginTop: 8, fontSize: 14 }}>
-                Words live in Markdown. The site turns them into a spaced-learning habit.
+                Words live in MongoDB. The site turns them into a spaced-learning habit.
               </p>
             </div>
             <Link className="btn primary" href="/vocabulary">Study today →</Link>

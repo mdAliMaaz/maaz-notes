@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
     "katex": "^0.16.28",
     "lucide-react": "^0.468.0",
     "mermaid": "^11.12.0",
+    "mongodb": "^7.7.0",
     "next": "16.3.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -20,14 +24,17 @@
     "rehype-highlight": "^7.0.2",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "dotenv": "^18.0.4",
     "eslint": "^9.0.0",
     "eslint-config-next": "16.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5.8.0"
   }
 }

@@ -1,6 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
-import matter from "gray-matter";
+import { getDb } from "./db";
 
 export type Post = {
   slug: string;
@@ -11,34 +9,26 @@ export type Post = {
   content: string;
 };
 
-const postsDirectory = path.join(process.cwd(), "content", "posts");
-
-export function getPosts(): Post[] {
-  if (!fs.existsSync(postsDirectory)) return [];
-  return fs
-    .readdirSync(postsDirectory)
-    .filter((file) => file.endsWith(".md"))
-    .map((file) => {
-      const raw = fs.readFileSync(path.join(postsDirectory, file), "utf8");
-      const { data, content } = matter(raw);
-      return {
-        slug: file.replace(/\.md$/, ""),
-        title: data.title ?? file.replace(/\.md$/, ""),
-        description: data.description ?? "",
-        date: data.date ?? "",
-        tags: Array.isArray(data.tags) ? data.tags : [],
-        content,
-      };
-    })
-    .sort((a, b) => b.date.localeCompare(a.date));
+export async function getPosts(): Promise<Post[]> {
+  const db = await getDb();
+  return db
+    .collection<Post>("posts")
+    .find({}, { projection: { _id: 0 } })
+    .sort({ date: -1 })
+    .toArray();
 }
 
-export function getPost(slug: string): Post | undefined {
-  return getPosts().find((post) => post.slug === slug);
+export async function getPost(slug: string): Promise<Post | undefined> {
+  const db = await getDb();
+  const post = await db
+    .collection<Post>("posts")
+    .findOne({ slug }, { projection: { _id: 0 } });
+  return post ?? undefined;
 }
 
-export function getPostMarkdown(slug: string): string | undefined {
-  const filePath = path.join(postsDirectory, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return undefined;
-  return fs.readFileSync(filePath, "utf8");
+export async function getPostMarkdown(slug: string): Promise<string | undefined> {
+  const post = await getPost(slug);
+  if (!post) return undefined;
+  const tagsStr = post.tags.map((t) => `"${t}"`).join(", ");
+  return `---\ntitle: "${post.title}"\ndescription: "${post.description}"\ndate: "${post.date}"\ntags: [${tagsStr}]\n---\n\n${post.content}`;
 }
